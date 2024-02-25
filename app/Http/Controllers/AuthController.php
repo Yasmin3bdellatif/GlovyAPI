@@ -2,27 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
-        // Validate input data
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255',
-            'password' => 'required|string|min:6',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:20',
-            'birthdate' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
+    public function register(RegisterRequest $request) {
         // Create new user
         $user = User::create([
             'username' => $request->input('username'),
@@ -36,19 +26,12 @@ class AuthController extends Controller
     }
 
 
-    public function login(Request $request) {
-        // Validate input data
-        $validator = Validator::make($request->all(), [
-            'username_or_email' => 'required|string',
-            'password' => 'required|string',
-        ]);
+    public function login(LoginRequest $request) {
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
 
         // Attempt to authenticate the user
-        if (Auth::attempt(['email' => $request->input('username_or_email'), 'password' => $request->input('password')])) {
+        if (Auth::attempt(['email' => $request->input('username_or_email'),
+            'password' => $request->input('password')])) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 

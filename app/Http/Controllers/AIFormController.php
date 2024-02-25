@@ -2,29 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AIFormRequest;
 use App\Models\AIForm;
 use Illuminate\Http\Request;
 
 class AIFormController extends Controller
 {
-    public function submitForm(Request $request)
+    public function submitForm(AIFormRequest $request)
     {
-        // Validate input data
-        $validatedData = $request->validate([
-            'Fo' => 'required',
-            'Fio' => 'required',
-            'Fhi' => 'required',
-            'Jitter' => 'required',
-            'Rap' => 'required',
-            'Ppq' => 'required',
-            'Shimmer' => 'required',
-            'Dpq' => 'required',
-
-
-        ]);
 
         // Create AI form
-        $aiForm = AIForm::create($validatedData);
+        $aiForm = AIForm::create($request->validated());
 
         return response()->json(['message' => 'AI form submitted successfully']);
     }

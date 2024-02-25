@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AIFormController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\GlovyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
@@ -26,19 +27,44 @@ use Illuminate\Support\Facades\Route;
 
 
 //registration and login
-Route::post('/register', [\App\Http\Controllers\AuthController::class,'register']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);
+//Route::post('/register', [\App\Http\Controllers\AuthController::class,'register']);
+//Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);
 
 //profile
-Route::middleware('auth:sanctum')->get('/profile', [UserController::class, 'profile']);
+//Route::middleware('auth:sanctum')->get('/profile', [UserController::class, 'profile']);
 //edit profile
-Route::middleware('auth:sanctum')->put('/profile', [UserController::class, 'editProfile']);
+//Route::middleware('auth:sanctum')->put('/profile', [UserController::class, 'editProfile']);
+
+
+
+
+
+#region users
+//localhost/api/users/login
+Route::prefix('users')
+    ->name('users.')
+    ->controller(AuthController::class)
+    ->group(function (){
+    Route::post('register','register')->name('register');
+    Route::post('login','login')->name('login');
+});
+
+#endregion
+
+
+#region profile
+Route::prefix('profile')
+    ->name('profile')
+    ->middleware(['profile', 'profile'])
+    ->group(function () {
+        Route::get('/', [UserController::class, 'profile']);
+        Route::put('/', [UserController::class, 'editProfile']);
+    });
+#endregion
+
 
 //doctors info
-Route::get('/doctors', [\App\Http\Controllers\DoctorController::class, 'index']);
-
-//exercise
-Route::get('/exercises', [\App\Http\Controllers\ExerciseController::class, 'index']);
+Route::get('/doctors', [DoctorController::class, 'index']);
 
 //ai form
 Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
