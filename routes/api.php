@@ -57,18 +57,29 @@ Route::prefix('profile')
     ->name('profile')
     ->middleware(['profile', 'profile'])
     ->group(function () {
-        Route::get('/', [UserController::class, 'profile']);
-        Route::put('/', [UserController::class, 'editProfile']);
+        Route::get('/profile', [UserController::class, 'show']);
+        Route::put('/profile', [UserController::class, 'update']);
+        Route::delete('/profile', [UserController::class, 'destroy']);
+
+
     });
 #endregion
 
 
-//doctors info
-Route::get('/doctors', [DoctorController::class, 'index']);
+#region doctors
+// routes/api.php
+Route::prefix('doctors')->group(function () {
+    Route::get('/', [DoctorController::class, 'index']);
+    Route::post('/', [DoctorController::class, 'store']);
+    Route::get('/{id}', [DoctorController::class, 'show']);
+    Route::put('/{id}', [DoctorController::class, 'update']);
+    Route::delete('/{id}', [DoctorController::class, 'destroy']);
+});
+#endregion
+
 
 //ai form
 Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
 
 //home
-Route::middleware('auth:sanctum')->get('/', [GlovyController::class, 'glovy']);
 
