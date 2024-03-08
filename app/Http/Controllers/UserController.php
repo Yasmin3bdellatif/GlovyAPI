@@ -7,20 +7,26 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function profile() {
+    public function show()
+    {
         $user = Auth::user();
-
         return response()->json($user);
     }
 
-
-
-    public function editProfile(Request $request) {
+    public function update(Request $request)
+    {
         $user = Auth::user();
-
-        // Update user profile
-
-        return response()->json(['message' => 'Profile updated successfully']);
+        $user->update($request->all());
+        return response()->json($user, 200);
     }
+
+    public function destroy()
+    {
+        $user = Auth::user();
+        $user->delete();
+        return response()->json(null, 204);
+    }
+
+
 
 }

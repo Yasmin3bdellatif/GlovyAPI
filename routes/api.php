@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AIFormController;
-use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\GlovyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
