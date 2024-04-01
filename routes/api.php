@@ -83,3 +83,10 @@ Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
 
 //home
 
+
+#regiontest
+Route::get('/test' ,function ()
+{
+    return 'something';
+});
+#endregion

@@ -15,30 +15,39 @@ use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request) {
-        // Create new user
-        $user = User::create([
-            'username' => $request->input('username'),
-            'password' => bcrypt($request->input('password')),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'birthdate' => $request->input('birthdate'),
-        ]);
+    public function register(RegisterRequest $request)
+    {
+        // Validate the request
+        $validatedData = $request->validated();
 
-        return response()->json(['message' => 'User registered successfully']);
+
+        // Create new user
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'username' => $validatedData['username'],
+                'email' => $validatedData['email'],
+                'password' => bcrypt($validatedData['password']),
+                'birthdate' => $validatedData['birthdate'],
+                'phoneNumber' => $validatedData['phoneNumber'],
+            ]);
+
+
+
+        return response()->json(['message' => 'You registered successfully']);
     }
+
 
 
     public function login(LoginRequest $request) {
 
 
         // Attempt to authenticate the user
-        if (Auth::attempt(['email' => $request->input('username_or_email'),
+        if (Auth::attempt(['email' => $request->input('email' ),
             'password' => $request->input('password')])) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            return response()->json(['token' => $token]);
+            return response()->json(['message' =>'You logged in']);
         } else {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
