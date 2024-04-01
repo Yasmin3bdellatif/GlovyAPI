@@ -38,11 +38,13 @@ class AuthController extends Controller
 
 
     public function login(LoginRequest $request) {
-
+        // Extract email or username from the request
+        $emailOrUsername = $request->input('email') ?: $request->input('username');
 
         // Attempt to authenticate the user
-        if (Auth::attempt(['email' => $request->input('email' ),
-            'password' => $request->input('password')])) {
+        if (Auth::attempt(['email' => $emailOrUsername, 'password' => $request->input('password')]) ||
+            Auth::attempt(['username' => $emailOrUsername, 'password' => $request->input('password')])) {
+
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
@@ -51,6 +53,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
     }
+
 
     public function sendResetLinkEmail(Request $request)
     {
