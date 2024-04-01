@@ -26,8 +26,7 @@ class AuthController extends Controller
                 'name' => $validatedData['name'],
                 'username' => $validatedData['username'],
                 'email' => $validatedData['email'],
-                'password' => bcrypt($validatedData['password']),
-                'birthdate' => $validatedData['birthdate'],
+                'password' => Hash::make($validatedData['password']),                'birthdate' => $validatedData['birthdate'],
                 'phoneNumber' => $validatedData['phoneNumber'],
             ]);
 

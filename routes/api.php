@@ -78,10 +78,10 @@ Route::prefix('doctors')->group(function () {
 #endregion
 
 
+#regionAI
 //ai form
 Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
-
-//home
+#endregion
 
 
 #regiontest
