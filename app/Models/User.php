@@ -26,7 +26,7 @@ class User extends Authenticatable
         'birthdate',
         'phoneNumber',
         'code',
-        'expired at'
+        'expired_at'
     ];
 
     /**
@@ -47,4 +47,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function generateCode()
+    {
+        $this-> timestamps =false;
+        $this-> code = rand(1000,9999);
+        $this->expired_at = now()->addMinute(15) ;
+        $this->save();
+    }
 }
