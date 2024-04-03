@@ -28,5 +28,7 @@ class LoginRequest extends FormRequest
             'username' => 'required_without:email|string', // Require username if email is not present
             'password' => 'required|string'
         ];
+
+
     }
 }
