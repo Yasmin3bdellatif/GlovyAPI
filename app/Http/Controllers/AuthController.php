@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
+use  App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,8 @@ class AuthController extends Controller
                 'name' => $validatedData['name'],
                 'username' => $validatedData['username'],
                 'email' => $validatedData['email'],
-                'password' => Hash::make($validatedData['password']),                'birthdate' => $validatedData['birthdate'],
+                'password' => Hash::make($validatedData['password']),
+                'birthdate' => $validatedData['birthdate'],
                 'phoneNumber' => $validatedData['phoneNumber'],
             ]);
 
@@ -48,47 +50,57 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
+            $user->generateCode();
+
             return response()->json(['message' =>'You logged in']);
+
+
         } else {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
     }
 
+    public function logout(){
+        $user = Auth::guard('user')->user();
 
-    public function sendResetLinkEmail(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
+        if ($user) {
+            $accessToken = $user->token();
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+            if ($accessToken) {
+                DB::table('oauth_refresh_tokens')
+                    ->where('access_token_id', $accessToken->id)
+                    ->update(['revoked' => true]);
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => __($status)])
-            : response()->json(['message' => __($status)], 400);
-    }
-
-    public function reset(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|confirmed|min:8',
-        ]);
-
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->save();
+                    $accessToken->revoke();
             }
-        );
-
-        return $status == Password::PASSWORD_RESET
-            ? response()->json(['message' => __($status)])
-            : response()->json(['message' => __($status)], 400);
+            return response([
+                'status' => true,
+                'message' => 'Logged out successfully',
+            ]);
+        }
     }
+
+    public function generateOTP(Request $request)
+    {
+        $user = Auth::user(); // Get the currently authenticated user
+
+        if (!$user) {
+            return response([
+                'message' => 'There is no account with this email',
+            ]);
+        }
+
+        $user->generateCode(); // Generate OTP code
+        $user->notify(new OTP()); // Send OTP notification
+        return response([
+            'OTP-Code' => $user->code,
+        ]);
+    }
+
+
+
+
+
 
 
 

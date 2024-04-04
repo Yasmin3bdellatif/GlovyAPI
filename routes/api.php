@@ -4,6 +4,7 @@ use App\Http\Controllers\AIFormController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use  App\Http\Controllers\TwoFactorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,8 +37,10 @@ Route::prefix('users')
     ->group(function (){
     Route::post('register','register')->name('register');
     Route::post('login','login')->name('login');
-});
+    Route::get('generateOTP','generateOTP')->name('generateOTP');
+    Route::get('logout','logout')->name('logout');
 
+    });
 #endregion
 
 
