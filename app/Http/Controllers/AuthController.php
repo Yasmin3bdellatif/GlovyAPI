@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use  App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Notifications\sendCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
 
-            $user->generateCode();
+            $user->generateCode(); //insert code in database
 
             return response()->json(['message' =>'You logged in']);
 
@@ -82,7 +83,7 @@ class AuthController extends Controller
 
     public function generateOTP(Request $request)
     {
-        $user = Auth::user(); // Get the currently authenticated user
+        $user = User::user(); // Get the currently authenticated user
 
         if (!$user) {
             return response([
@@ -91,9 +92,48 @@ class AuthController extends Controller
         }
 
         $user->generateCode(); // Generate OTP code
-        $user->notify(new OTP()); // Send OTP notification
+        $user->notify(new sendCode()); // Send OTP notification
         return response([
             'OTP-Code' => $user->code,
+        ]);
+    }
+
+    public function verifyOTP(Request $request){
+        $user = User::where('email',$request->email)->first();
+        $request->validate([
+            'code' => 'required',
+        ]);
+
+        if ($request->code == $user->code) {
+            return response(
+                [
+                    'status' => true,
+                    'message' => 'Correct verification code',
+                ]);
+        }
+        else
+        {
+            return response([
+                'status' => false,
+                'message' => 'Your verification code is incorrect',
+            ]);
+        }
+    }
+
+    public function resetPassword(Request $request){
+        $user = User::where('email',$request->email)->first();
+
+        $request->validate([
+            'password' => ['required', 'confirmed','min:8',Password::defaults()],
+        ]);
+
+        $user -> update([
+            'password' => Hash::make($request->password),
+            'code' => null, // Clear the verification code after successful reset
+        ]);
+        return response([
+            'status' => true,
+            'message' => 'Your password has been changed'
         ]);
     }
 

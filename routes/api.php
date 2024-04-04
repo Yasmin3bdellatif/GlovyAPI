@@ -38,6 +38,8 @@ Route::prefix('users')
     Route::post('register','register')->name('register');
     Route::post('login','login')->name('login');
     Route::get('generateOTP','generateOTP')->name('generateOTP');
+    Route::get('verifyOTP','verifyOTP')->name('verifyOTP');
+    Route::get('resetPassword','resetPassword')->name('resetPassword');
     Route::get('logout','logout')->name('logout');
 
     });
