@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('a_i_forms', function (Blueprint $table) {
             $table->id();
-            $table->string('Fo');
-            $table->string('Fio');
-            $table->string('Fhi');
-            $table->string('Jitter');
-            $table->string('Rap');
-            $table->string('Ppq');
-            $table->string('Shimmer');
-            $table->string('Dpq');
+            $table->string('Fo')->nullable();
+            $table->string('Fio')->nullable();
+            $table->string('Fhi')->nullable();
+            $table->string('Jitter')->nullable();
+            $table->string('Rap')->nullable();
+            $table->string('Ppq')->nullable();
+            $table->string('Shimmer')->nullable();
+            $table->string('Dpq')->nullable();
             $table->timestamps();
         });
     }

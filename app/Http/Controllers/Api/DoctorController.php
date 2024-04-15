@@ -1,68 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Doctor;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class DoctorController extends Controller
 {
-    //all doctors
-    public function index()
+    public function index($id)
     {
-        $doctors = Doctor::all();
-        return response()->json($doctors);
-    }
+        // Define the duration for caching in minutes
+        $minutes = 60; // cache for 60 minutes
 
+        // Retrieve user data from cache, or fetch from database if not cached
+        //$user = Cache::remember('user_' . $id, $minutes, function () use ($id) {
+        //    return User::findOrFail($id);
+       // });
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'address' => 'required|string',
-            'image' => 'string'
-        ]);
+        // Return user data as JSON response
+       // return response()->json($user);
 
-        $doctor = Doctor::create($request->all());
-        return response()->json($doctor, 201);
-    }
-
-    public function show($id)
-    {
-        $doctor = Doctor::find($id);
-        if (!$doctor) {
-            return response()->json(['message' => 'Does not exist'], 404);
-        }
-        return response()->json($doctor);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'address' => 'required|string'
-        ]);
-
-        $doctor = Doctor::find($id);
-        if (!$doctor) {
-            return response()->json(['message' => 'Does not exist'], 404);
-        }
-
-        $doctor->update($request->all());
-        return response()->json($doctor, 200);
-    }
-
-    public function destroy($id)
-    {
-        $doctor = Doctor::find($id);
-        if (!$doctor) {
-            return response()->json(['message' => 'Does not exist'], 404);
-        }
-
-        $doctor->delete();
-        return response()->json(['message' => 'Done'], 200);
     }
 }
+
+
