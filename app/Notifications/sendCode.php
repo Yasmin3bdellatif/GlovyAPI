@@ -18,21 +18,23 @@ class sendCode extends Notification
     }
 
 
-    public function via(object $notifiable): array
+    public function via( $notifiable)
     {
         return ['mail'];
     }
 
 
-    public function toMail(object $notifiable): MailMessage
+
+    public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('verification code')
-                    ->line('Your Verification code is .', $notifiable->code);
+            ->subject('Verification Code')
+            ->line('Your Verification code is: ' . $notifiable->code);
     }
 
 
-    public function toArray(object $notifiable): array
+
+    public function toArray( $notifiable)
     {
         return [
             //

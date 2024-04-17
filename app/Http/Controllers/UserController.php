@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Password;
+use App\Services\OtpService;
+
 
 
 class UserController extends Controller
@@ -37,7 +39,6 @@ class UserController extends Controller
         return response()->json(['message' => 'You registered successfully']);
     }
 
-
     public function login(LoginRequest $request)
     {
         // Extract email or username from the request
@@ -46,10 +47,8 @@ class UserController extends Controller
         // Attempt to authenticate the user
         if (Auth::attempt(['email' => $emailOrUsername, 'password' => $request->input('password')]) ||
             Auth::attempt(['username' => $emailOrUsername, 'password' => $request->input('password')])) {
-            return Auth::user();
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
-
 
 
             return response()->json(['message' => 'You logged in',
@@ -71,22 +70,32 @@ class UserController extends Controller
         ]);
     }
 
+    protected $otpService;
+
+    public function __construct(OtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
     public function generateOTP(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $email = $request->input('email');
 
-        if (!$user) {
-            return response([
-                'message' => 'There is no account with this email',
+        $result = $this->otpService->generateAndSendOTP($email);
+
+        if ($result['success']) {
+            return response()->json([
+                'message' => 'OTP sent successfully',
             ]);
+        } else {
+            return response()->json([
+                'message' => $result['message'],
+            ], 500);
         }
 
-        $user->generateCode(); // Generate OTP code
-        $user->notify(new sendCode()); // Send OTP notification
-        return response([
-            'OTP-Code' => $user->code,
-        ]);
     }
+
+
 
     public function verifyOTP(Request $request)
     {
@@ -147,7 +156,6 @@ class UserController extends Controller
             $user->delete();
             return response()->json(null, 204);
         }
-
 
 
     }
