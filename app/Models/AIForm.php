@@ -9,8 +9,5 @@ class AIForm extends Model
 {
     use HasFactory;
 
-    public function profile()
-    {
-        return $this->belongsTo(Profile::class);
-    }
+
 }
