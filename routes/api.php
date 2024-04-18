@@ -44,18 +44,7 @@ Route::prefix('users')
 #endregion
 
 
-#region profile
-Route::prefix('profile')
-    ->name('profile')
-    ->middleware(['profile', 'profile'])
-    ->group(function () {
-        Route::get('/profile', [UserController::class, 'show']);
-        Route::put('/profile', [UserController::class, 'update']);
-        Route::delete('/profile', [UserController::class, 'destroy']);
 
-
-    });
-#endregion
 
 
 #region doctors
@@ -67,8 +56,9 @@ Route::prefix('profile')
 //    Route::put('/{id}', [DoctorController::class, 'update']);
 //    Route::delete('/{id}', [DoctorController::class, 'destroy']);
 //});
+Route::post('/doctors', [DoctorController::class, 'cacheData']);
 
-Route::get('/api/users/{id}', [UserController::class,'index']);
+//Route::get('/api/users/{id}', [UserController::class,'index']);
 
 #endregion
 
