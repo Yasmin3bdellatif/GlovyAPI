@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DoctorRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -28,14 +29,10 @@ class DoctorController extends Controller
     //}
 
 
-    public function cacheData(Request $request)
+    public function cacheData(DoctorRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'number' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'photo' => 'required|image',
-        ]);
+        // Validation is performed automatically by DoctorRequest class
+        $validatedData = $request->validated();
 
         $data = [
             'name' => $validatedData['name'],
