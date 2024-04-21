@@ -7,24 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-//Route::middleware('auth:sanctum')
-//    ->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
-
-
-//registration and login
-//Route::post('/register', [\App\Http\Controllers\AuthController::class,'register']);
-//Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);
-
-//profile
-//Route::middleware('auth:sanctum')->get('/profile', [UserController::class, 'profile']);
-//edit profile
-//Route::middleware('auth:sanctum')->put('/profile', [UserController::class, 'editProfile']);
-
-
-
 
 
 #region users
@@ -37,31 +19,26 @@ Route::prefix('users')
     Route::post('login','login')->name('login');
     Route::get('generateOTP','generateOTP')->name('generateOTP');
     Route::get('verifyOTP','verifyOTP')->name('verifyOTP');
-    Route::get('resetPassword','resetPassword')->name('resetPassword');
+    Route::post('resetPassword','resetPassword')->name('resetPassword');
     Route::post('logout','logout')->middleware('auth:sanctum')->name('logout');
+    Route::put('update/{id}','update')->name('update');
+    Route::get('show/{id}',  'show')->name('show');
+    Route::delete('destroy/{id}',  'destroy')->name('destroy');
+
+
+
 
     });
 #endregion
 
-
-
-
-
 #region doctors
 // routes/api.php
-//Route::prefix('doctors')->group(function () {
-//    Route::get('/', [DoctorController::class, 'index']);
-//    Route::post('/', [DoctorController::class, 'store']);
-//    Route::get('/{id}', [DoctorController::class, 'show']);
-//    Route::put('/{id}', [DoctorController::class, 'update']);
-//    Route::delete('/{id}', [DoctorController::class, 'destroy']);
-//});
+
 Route::post('/doctors', [DoctorController::class, 'cacheData']);
 
 //Route::get('/api/users/{id}', [UserController::class,'index']);
 
 #endregion
-
 
 #regionAI
 //ai form
@@ -69,8 +46,3 @@ Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
 #endregion
 
 
-#regiontest
-/*Route::get('/test' ,function () {
-    return 'something';
-});*/
-#endregion

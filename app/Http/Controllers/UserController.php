@@ -26,7 +26,7 @@ class UserController extends Controller
 
 
         // Create new user
-        $user = Auth::create([
+        $user = User::create([
             'name' => $validatedData['name'],
             'username' => $validatedData['username'],
             'email' => $validatedData['email'],
@@ -137,25 +137,30 @@ class UserController extends Controller
     }
 
 
-    public function show()
-        {
-            $user = Auth::user();
-            return response()->json($user);
-        }
+    public function show($id)
+    {
+        $user = User::find($id);
 
-        public function update(Request $request)
-        {
-            $user = Auth::user();
-            $user->update($request->all());
-            return response()->json($user, 200);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
         }
-
-        public function destroy()
-        {
-            $user = Auth::user();
-            $user->delete();
-            return response()->json(null, 204);
-        }
-
 
     }
+
+
+    public function update(Request $request, $id)
+    {
+        $product = User::find($id);
+        $product->update($request->all());
+        return $product;
+    }
+
+
+    public function destroy($id)
+    {
+        return User::destroy($id);
+    }
+
+
+
+}

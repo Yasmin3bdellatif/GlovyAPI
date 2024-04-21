@@ -49,11 +49,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function generateCode()
+    // app/Models/User.php
+
+
+    public function  AIForm()
     {
-        $this-> timestamps =false;
-        $this-> code = rand(100000,999999);
-        $this->expired_at = now()->addMinute(15) ;
-        $this->save();
+        return $this->hasOne(AIForm::class);
     }
+
+
 }
