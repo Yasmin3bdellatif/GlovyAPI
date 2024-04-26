@@ -50,7 +50,17 @@ class DoctorController extends Controller
         return response()->json(['message' => 'Data stored in cache successfully!', 'data' => $data]);
     }
 
+    public function show()
+    {
+        // Retrieve cached data
+        $userData = Cache::get('user_data');
 
+        if ($userData) {
+            return response()->json(['message' => 'Cached data retrieved successfully!', 'data' => $userData]);
+        } else {
+            return response()->json(['message' => 'No cached data found.'], 404);
+        }
+    }
 }
 
 

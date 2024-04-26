@@ -17,8 +17,8 @@ Route::prefix('users')
     ->group(function (){
     Route::post('register','register')->name('register');
     Route::post('login','login')->name('login');
-    Route::get('generateOTP','generateOTP')->name('generateOTP');
-    Route::get('verifyOTP','verifyOTP')->name('verifyOTP');
+    Route::Post('generateOTP','generateOTP')->name('generateOTP');
+    Route::post('verifyOTP', 'verifyOTP')->name('verifyOTP');
     Route::post('resetPassword','resetPassword')->name('resetPassword');
     Route::post('logout','logout')->middleware('auth:sanctum')->name('logout');
     Route::put('update/{id}','update')->name('update');
@@ -35,6 +35,8 @@ Route::prefix('users')
 // routes/api.php
 
 Route::post('/doctors', [DoctorController::class, 'cacheData']);
+Route::get('/doctors/show', [DoctorController::class, 'show']);
+
 
 //Route::get('/api/users/{id}', [UserController::class,'index']);
 
@@ -42,7 +44,9 @@ Route::post('/doctors', [DoctorController::class, 'cacheData']);
 
 #regionAI
 //ai form
-Route::post('/submit-ai-form', [AIFormController::class, 'submitForm']);
+Route::post('/submit-ai-form', [AIFormController::class, 'submitForm'])->middleware('auth:sanctum');
+Route::delete('/destroy', [AIFormController::class, 'destroy']);
+
 #endregion
 
 

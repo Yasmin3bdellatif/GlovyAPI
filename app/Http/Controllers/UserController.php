@@ -52,7 +52,8 @@ class UserController extends Controller
 
 
             return response()->json(['message' => 'You logged in',
-                'token'=>$token
+                'token'=>$token,
+                'id' => $user->id
                 ])
                 ;
 
@@ -86,6 +87,7 @@ class UserController extends Controller
         if ($result['success']) {
             return response()->json([
                 'message' => 'OTP sent successfully',
+
             ]);
         } else {
             return response()->json([
@@ -93,37 +95,56 @@ class UserController extends Controller
             ], 500);
         }
 
+
     }
-
-
 
     public function verifyOTP(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        // Retrieve email and code from the request
+        $email = $request->input('email');
+        $code = $request->input('code');
+
+        // Validate the request
         $request->validate([
+            //'email' => 'required|email',
             'code' => 'required',
         ]);
 
-        if ($request->code == $user->code) {
-            return response(
-                [
-                    'status' => true,
-                    'message' => 'Correct verification code',
-                ]);
+        // Find the user by email
+        $user = User::where('email', $email)->first();
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found with the provided email',
+            ], 404);
+        }
+
+        // Check if the provided code matches the user's code
+        if ($code == $user->code) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Correct verification code',
+            ]);
         } else {
-            return response([
+            return response()->json([
                 'status' => false,
                 'message' => 'Your verification code is incorrect',
             ]);
         }
     }
 
+
+
     public function resetPassword(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $email = $request->input('email');
 
+        $user = User::where('email', $request->email)->first();
+        //dd($user);
         $request->validate([
-            'password' => ['required', 'confirmed', 'min:8', Password::defaults()],
+            'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
         $user->update([
@@ -144,16 +165,21 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
+        return response()->json(['user' => $user], 200);
+
 
     }
 
 
     public function update(Request $request, $id)
     {
-        $product = User::find($id);
-        $product->update($request->all());
-        return $product;
+        $user = User::find($id);
+        $user->fill($request->all());
+        $user->save();
+        return $user;
     }
+
+
 
 
     public function destroy($id)

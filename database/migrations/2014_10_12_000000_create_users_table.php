@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('code')->nullable();
             $table->dateTime('expired_at')->nullable();
+            $table->string('photo')->nullable(); // Add the 'photo' field
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

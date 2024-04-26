@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('Ppq')->nullable();
             $table->string('Shimmer')->nullable();
             $table->string('Dpq')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

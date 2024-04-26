@@ -20,7 +20,8 @@ class OtpService
     {
         $user = User::where('email', $email)->first();
 
-        //mdd($user);
+
+        //dd($user);
         if (!$user) {
             return [
                 'success' => false,
