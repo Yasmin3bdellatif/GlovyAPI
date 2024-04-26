@@ -20,8 +20,9 @@ Route::prefix('users')
     Route::Post('generateOTP','generateOTP')->name('generateOTP');
     Route::post('verifyOTP', 'verifyOTP')->name('verifyOTP');
     Route::post('resetPassword','resetPassword')->name('resetPassword');
+    Route::put('updatePassword', 'updatePassword')->middleware('auth:sanctum')->name('updatePassword');
     Route::post('logout','logout')->middleware('auth:sanctum')->name('logout');
-    Route::put('update/{id}','update')->name('update');
+    Route::post('update/{id}','update')->name('update');
     Route::get('show/{id}',  'show')->name('show');
     Route::delete('destroy/{id}',  'destroy')->name('destroy');
 

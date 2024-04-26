@@ -135,8 +135,6 @@ class UserController extends Controller
         }
     }
 
-
-
     public function resetPassword(Request $request)
     {
         $email = $request->input('email');
@@ -157,6 +155,30 @@ class UserController extends Controller
         ]);
     }
 
+    public function updatePassword(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        // Validate the request data
+        $request->validate([
+            'old_password' => ['required', 'min:8'],
+            'new_password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        // Check if the old password matches the user's current password
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json(['error' => 'The old password is incorrect.'], 400);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Your password has been changed'
+        ]);
+    }
 
     public function show($id)
     {
@@ -170,29 +192,45 @@ class UserController extends Controller
 
     }
 
-
-    public function update(Request $request, $id)
-    {
-        $user = User::find($id);
-
-
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos');
-            $data['photo'] = $photoPath;
-        }
-
-        $user->update(request()->all());
-
-        return $user;
-    }
-
-
-
-
     public function destroy($id)
     {
         return User::destroy($id);
     }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+        //dd($user);
+
+        // Validate the request data, including the photo field
+        $request->validate([
+
+            'photo' => 'image|mimes:jpeg,png,jpg,gif', // Example validation for image upload
+        ]);
+
+        //dd($request->all());
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Store the photo in storage/app/public/photos directory
+            $photoPath = $request->file('photo')->store('photos', 'public');
+            // Update the user's photo field with the file path
+            $user->photo = $photoPath;
+        }
+
+        // Update other fields if provided
+        $user->update($request->all());
+        //return $user;
+
+
+        return response()->json(['message' => 'User profile updated successfully.', 'user' => $user]);
+    }
+
+
+
+
+
+
 
 
 
