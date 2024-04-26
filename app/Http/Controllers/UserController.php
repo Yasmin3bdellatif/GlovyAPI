@@ -174,8 +174,15 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-        $user->fill($request->all());
-        $user->save();
+
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos');
+            $data['photo'] = $photoPath;
+        }
+
+        $user->update(request()->all());
+
         return $user;
     }
 
