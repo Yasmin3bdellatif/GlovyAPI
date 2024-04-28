@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AIFormController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\ModelController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,8 @@ Route::get('/doctors/show', [DoctorController::class, 'show']);
 //ai form
 Route::post('/submit-ai-form', [AIFormController::class, 'submitForm'])->middleware('auth:sanctum');
 Route::delete('/destroy', [AIFormController::class, 'destroy']);
+Route::post('/query-model', [ModelController::class, 'query']);
+
 
 #endregion
 
