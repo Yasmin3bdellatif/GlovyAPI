@@ -13,18 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->unique();
+        Schema::create('_qr__code', function (Blueprint $table) {
             $table->string('username')->unique();
             $table->string('phoneNumber')->nullable();
             $table->date('birthdate');
-            $table->string('password');
-            $table->string('code')->nullable();
-            $table->dateTime('expired_at')->nullable();
-            $table->string('photo')->nullable(); // Add the 'photo' field
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->id();
             $table->timestamps();
         });
     }
@@ -36,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('_qr__code');
     }
 };

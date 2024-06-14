@@ -27,6 +27,9 @@ class ModelController extends Controller
                 ->withBody($fileContents, $file->getClientOriginalName())
                 ->post($apiUrl);
 
+            // تأخير الاستجابة لمدة 25 ثانية
+            sleep(30);
+
             return $response->json();
         } else {
             // في حالة عدم وجود الملف في الطلب

@@ -25,7 +25,6 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required_without:username|string', // Require email if username is not present
-            'username' => 'required_without:email|string', // Require username if email is not present
             'password' => 'required|string'
         ];
 

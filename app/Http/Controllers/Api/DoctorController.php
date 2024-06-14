@@ -4,31 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DoctorRequest;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Log;
 
 class DoctorController extends Controller
 {
-   // public function index($id)
-   // {
-        // Define the duration for caching in minutes
-        //$minutes = 60; // cache for 60 minutes
-
-        // Retrieve user data from cache, or fetch from database if not cached
-        //$user = Cache::remember('user_' . $id, $minutes, function () use ($id) {
-        //    return User::findOrFail($id);
-       // });
-
-        // Return user data as JSON response
-       // return response()->json($user);
-
-
-
-    //}
-
-
     public function cacheData(DoctorRequest $request)
     {
         // Validation is performed automatically by DoctorRequest class
@@ -45,7 +26,20 @@ class DoctorController extends Controller
             $data['photo'] = $photoPath;
         }
 
-        Cache::put('user_data', $data);
+        // Retrieve existing data from cache, or initialize an empty array if not exists
+        $existingData = Cache::get('user_data', []);
+
+        // Debugging line: Log existing data before adding new data
+        Log::info('Existing Data: ', $existingData);
+
+        // Add new data to existing data
+        $existingData[] = $data;
+
+        // Debugging line: Log updated data
+        Log::info('Updated Data: ', $existingData);
+
+        // Store the updated data back to cache
+        Cache::put('user_data', $existingData);
 
         return response()->json(['message' => 'Data stored in cache successfully!', 'data' => $data]);
     }
@@ -53,14 +47,15 @@ class DoctorController extends Controller
     public function show()
     {
         // Retrieve cached data
-        $userData = Cache::get('user_data');
+        $userData = Cache::get('user_data', []);
 
-        if ($userData) {
+        // Debugging line: Log retrieved data
+        Log::info('Retrieved Data: ', $userData);
+
+        if (!empty($userData)) {
             return response()->json(['message' => 'Cached data retrieved successfully!', 'data' => $userData]);
         } else {
             return response()->json(['message' => 'No cached data found.'], 404);
         }
     }
 }
-
-

@@ -27,7 +27,6 @@ class UserController extends Controller
 
         // Create new user
         $user = User::create([
-            'name' => $validatedData['name'],
             'username' => $validatedData['username'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
@@ -42,24 +41,27 @@ class UserController extends Controller
     public function login(LoginRequest $request)
     {
         // Extract email or username from the request
-        $emailOrUsername = $request->input('email') ?: $request->input('username');
+        $email = $request->input('email') ;
 
         // Attempt to authenticate the user
-        if (Auth::attempt(['email' => $emailOrUsername, 'password' => $request->input('password')]) ||
-            Auth::attempt(['username' => $emailOrUsername, 'password' => $request->input('password')])) {
+        if (Auth::attempt(['email' => $email, 'password' => $request->input('password')])) {
+
+            // Retrieve the authenticated user
             $user = Auth::user();
+
+            // Create a plain text token for the user
             $token = $user->createToken('authToken')->plainTextToken;
 
-
-            return response()->json(['message' => 'You logged in',
-                'token'=>$token,
+            // Return a success response with the token
+            return response()->json([
+                'message' => 'You logged in',
+                'token' => $token,
                 'id' => $user->id
-                ])
-                ;
-
+            ]);
 
         } else {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            // Return an error response for invalid credentials
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
     }
 
@@ -87,15 +89,12 @@ class UserController extends Controller
         if ($result['success']) {
             return response()->json([
                 'message' => 'OTP sent successfully',
-
             ]);
         } else {
-            return response()->json([
-                'message' => $result['message'],
-            ], 500);
+            // عرض رسالة خطأ ثابتة عند حدوث خطأ
+            return response()->json(['message' => 'There is no email with this account'], 500);
+
         }
-
-
     }
 
     public function verifyOTP(Request $request)
@@ -131,7 +130,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Your verification code is incorrect',
-            ]);
+            ], 422);
         }
     }
 
@@ -167,7 +166,7 @@ class UserController extends Controller
 
         // Check if the old password matches the user's current password
         if (!Hash::check($request->old_password, $user->password)) {
-            return response()->json(['error' => 'The old password is incorrect.'], 400);
+            return response()->json(['message' => 'The old password is incorrect.'], 400);
         }
 
         // Update the user's password
