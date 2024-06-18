@@ -10,5 +10,6 @@ class QRCodeController extends Controller
     public function result()
     {
 
+
     }
 }
