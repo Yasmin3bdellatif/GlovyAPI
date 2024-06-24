@@ -20,9 +20,9 @@
 </header>
 <main>
     <section class="profile">
-        <h4 class="hh">Name: Malak Ali</h4>
-        <h4 class="hh">Date of Birth: 01/01/2002</h4>
-        <h4 class="hh">Number: 01035022189</h4>
+        <h4 class="hh">Name: {{ $username }}</h4>
+        <h4 class="hh">Date of Birth: {{ $birthdate }}</h4>
+        <h4 class="hh">Number: {{ $phoneNumber }}</h4>
     </section>
     <section class="chart-container">
         <p style="margin-bottom: 10px; margin-top: 0px; font-weight: 900; font-size: 20px;">Change in X Position</p>
@@ -34,10 +34,10 @@
     var linchart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Time 1', 'Time 2', 'Time 3', 'Time 4', 'Time 5', 'Time 6', 'Time 7', 'Time 8', 'Time 9', 'Time 10'], // These should be your actual time labels
+            labels: ['Time 1', 'Time 2', 'Time 3', 'Time 4', 'Time 5', 'Time 6', 'Time 7', 'Time 8', 'Time 9', 'Time 10'],
             datasets: [{
                 label: 'X Position of Hand',
-                data: [0, 100, 120, 3000, 600, 480, 400, 342, 1, 150, 160, 200, 3000, 600, 480, 400, 342, 1, 500, 1000, 2000, 3000, 600, 480, 400, 342, 1], // These should be your actual x position data points
+                data: @json($chartData), // البيانات من Firebase
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
                 fill: false,
@@ -65,14 +65,14 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Time' // Label for the x-axis
+                        text: 'Time'
                     }
                 },
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'X axis Position' // Label for the y-axis
+                        text: 'X axis Position'
                     }
                 }
             }
